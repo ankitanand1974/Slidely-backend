@@ -72,6 +72,25 @@ app.get("/read", (req: Request, res: Response) => {
   res.json(submissions[index]);
 });
 
+app.delete("/delete/:index", (req: Request, res: Response) => {
+  const index = parseInt(req.params.index);
+
+  if (isNaN(index) || index < 0) {
+    return res.status(400).json({ error: "Invalid index" });
+  }
+
+  const submissions = readDB();
+
+  if (index >= submissions.length) {
+    return res.status(404).json({ error: "Submission not found" });
+  }
+
+  submissions.splice(index, 1);
+  writeDB(submissions);
+
+  res.json({ message: "Submission deleted successfully" });
+});
+
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
